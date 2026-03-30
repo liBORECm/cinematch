@@ -13,7 +13,6 @@ RAW_MOVIELENS_LINKS_PATH = "../datasets/raw/ml-32m/links.csv"
 RAW_MOVIELENS_RATINGS_PATH = "../datasets/raw/ml-32m/ratings.csv"
 
 CLEAN_TMDB_FILE_PATH = "../datasets/clean/tmdb-movies/TMDB_movie_dataset_v11.csv"
-CLEAN_MOVIELENS_LINKS_PATH = "../datasets/clean/ml-32m/links.csv"
 CLEAN_MOVIELENS_RATINGS_PATH = "../datasets/clean/ml-32m/ratings.csv"
 
 # =========================
