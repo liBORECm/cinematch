@@ -4,3 +4,4 @@ todo.md
 
 ml-api/datasets/*
 ml-api/model/*
+ml-api/app/__pycache__
