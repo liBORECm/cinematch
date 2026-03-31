@@ -15,6 +15,10 @@ RAW_MOVIELENS_RATINGS_PATH = "../datasets/raw/ml-32m/ratings.csv"
 CLEAN_TMDB_FILE_PATH = "../datasets/clean/tmdb-movies/TMDB_movie_dataset_v11.csv"
 CLEAN_MOVIELENS_RATINGS_PATH = "../datasets/clean/ml-32m/ratings.csv"
 
+debug=True
+API_TMDB_FILE_PATH = "../../ml-api/datasets/TMDB_movie_dataset_v11.csv"
+API_MOVIELENS_RATINGS_PATH = "../../ml-api/datasets/ratings.csv"
+
 # =========================
 # LOAD TMDB DATA
 # =========================
@@ -89,7 +93,15 @@ def ensure_dir(file_path):
 ensure_dir(CLEAN_TMDB_FILE_PATH)
 tmdb.to_csv(CLEAN_TMDB_FILE_PATH, index=False)
 print(f"✅ TMDB cleaned CSV saved: {CLEAN_TMDB_FILE_PATH}")
+if(not debug):
+    ensure_dir(API_TMDB_FILE_PATH)
+    tmdb.to_csv(API_TMDB_FILE_PATH, index=False)
+    print(f"✅ TMDB cleaned CSV saved: {API_TMDB_FILE_PATH}")
 
 ensure_dir(CLEAN_MOVIELENS_RATINGS_PATH)
 rating.to_csv(CLEAN_MOVIELENS_RATINGS_PATH, index=False)
 print(f"✅ MovieLens ratings CSV saved: {CLEAN_MOVIELENS_RATINGS_PATH}")
+if(not debug):
+    ensure_dir(API_MOVIELENS_RATINGS_PATH)
+    rating.to_csv(API_MOVIELENS_RATINGS_PATH, index=False)
+    print(f"✅ MovieLens ratings CSV saved: {API_MOVIELENS_RATINGS_PATH}")
