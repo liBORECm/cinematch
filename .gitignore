@@ -1,3 +1,6 @@
 sandbox/datasets/raw/*
 sandbox/datasets/clean/*
 todo.md
+
+ml-api/datasets/*
+ml-api/model/*
