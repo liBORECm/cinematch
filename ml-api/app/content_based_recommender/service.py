@@ -5,8 +5,8 @@ import pandas as pd
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-TF_IDF_MATRIX_PATH = BASE_DIR / "../model/tf_idf_matrix.pkl"
-TMDB_CSV_PATH = BASE_DIR / "../datasets/TMDB_movie_dataset_v11.csv"
+TF_IDF_MATRIX_PATH = BASE_DIR / "../../model/tf_idf_matrix.pkl"
+TMDB_CSV_PATH = BASE_DIR / "../../datasets/TMDB_movie_dataset_v11.csv"
 
 class ContenBasedRecommender:
     def __init__(self):
