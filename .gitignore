@@ -6,4 +6,4 @@ sandbox/datasets/clean/*
 
 ml-api/datasets/*
 ml-api/model/*
-ml-api/app/__pycache__
+__pycache__
