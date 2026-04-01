@@ -23,7 +23,7 @@ class ContenBasedRecommender:
             if tmdb_id in self.tmdb_id_to_index:
                 idx = self.tmdb_id_to_index[tmdb_id]
                 vectors.append(self.tfidf_matrix[idx].toarray()[0])
-                weights.append(rating + 3.5)
+                weights.append(rating)
 
         vectors = np.array(vectors)
         weights = np.array(weights)
