@@ -10,6 +10,8 @@ def recommend_content_based():
     ratings = data.get("ratings", [])
     k = data.get("k", 20)
 
+    print(f"Received request: \n    k: {k}\n    ratings: {ratings}")
+
     try:
         result = content_based_recommender.recommend(ratings, k)
         return jsonify(result), 200
