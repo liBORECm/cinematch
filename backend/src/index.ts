@@ -1,13 +1,13 @@
 import express from 'express'
 import config from './config/config'
-import { contentBasedRecommender } from './modules/contentBasedRecommender/contenBasedRecommender.service'
-import { UserProfile } from './models/userProfile'
+import cors from 'cors';
 import { contentBasedRecommenderRoutes } from './modules/contentBasedRecommender/contenBasedRecommender.controller'
 import { movieDBRoutes } from './modules/movieDB/movieDB.controller'
 
 const app = express()
 
 app.use(express.json())
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('API běží 🚀')

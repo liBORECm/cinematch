@@ -29,6 +29,8 @@
     "typescript": "^6.0.2"
   },
   "dependencies": {
+    "@types/cors": "^2.8.19",
+    "cors": "^2.8.6",
     "csv-parse": "^6.2.1"
   }
 }
