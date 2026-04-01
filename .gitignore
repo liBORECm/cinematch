@@ -7,3 +7,6 @@ sandbox/datasets/clean/*
 ml-api/datasets/*
 ml-api/model/*
 __pycache__
+
+node_modules
+.env
