@@ -23,6 +23,9 @@ class ContenBasedRecommender:
             if tmdb_id in self.tmdb_id_to_index:
                 idx = self.tmdb_id_to_index[tmdb_id]
                 vectors.append(self.tfidf_matrix[idx].toarray()[0])
+                #TODO this should be -3.5 so bad ratings
+                #are actaully negative
+                #but for some reason it fuck everything up :)
                 weights.append(rating)
 
         vectors = np.array(vectors)
