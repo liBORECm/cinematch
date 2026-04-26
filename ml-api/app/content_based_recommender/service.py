@@ -23,20 +23,19 @@ class ContenBasedRecommender:
             if tmdb_id in self.tmdb_id_to_index:
                 idx = self.tmdb_id_to_index[tmdb_id]
                 vectors.append(self.tfidf_matrix[idx].toarray()[0])
-                #TODO this should be -3.5 so bad ratings
-                #are actaully negative
-                #but for some reason it fuck everything up :)
-                weights.append(rating)
+                weights.append(rating - 2.5)
 
         vectors = np.array(vectors)
         weights = np.array(weights)
 
-        user_profile = np.average(vectors, axis=0, weights=weights)
+        user_profile = np.sum(vectors * weights[:, np.newaxis], axis=0)
         user_profile = user_profile.reshape(1, -1)
 
         return user_profile
 
     def recommend(self, ratings, k):
+        ##Rating are expected to be from 0 to 5
+        ##TODO do a check
         k_temp = k + len(ratings.items())
         user_vector = self.build_user_profile(ratings)
         sims = cosine_similarity(user_vector, self.tfidf_matrix).flatten()
