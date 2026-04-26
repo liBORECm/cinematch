@@ -17,3 +17,18 @@ def recommend_content_based():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+@bp.route("/api/v1/check_recommended_content_based", methods=["POST"])
+def check_recommended_content_based():
+    data = request.get_json()
+
+    ratings = data.get("ratings", [])
+    movie_id = data.get("movie_id", 1)
+
+    print(f"Received request: \n    movie_id: {movie_id}\n    ratings: {ratings}")
+
+    try:
+        result = content_based_recommender.check_recommended(ratings, movie_id)
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

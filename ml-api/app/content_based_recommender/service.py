@@ -52,6 +52,19 @@ class ContenBasedRecommender:
         results = self.tmdb.iloc[filtered_idx][["title", "vote_average", "id"]]
 
         return results.to_dict(orient="records")
+    
+    def check_recommended(self, ratings, movie_id):
+        user_vector = self.build_user_profile(ratings)
+        sims = cosine_similarity(user_vector, self.tfidf_matrix).flatten()
+        
+        weighted_sims = sims * self.tmdb["popularity_log"].values
+        results = self.tmdb[["id", "title", "vote_average", "popularity"]].copy()
+        results["match_score"] = weighted_sims
+
+        results["rank"] = results["match_score"].rank(ascending=False).astype(int)
+        results["percentile"] = results["match_score"].rank(pct=True) * 100
+
+        return results[results["id"] == movie_id][0]
 
 
 content_based_recommender = ContenBasedRecommender()
