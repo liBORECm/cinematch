@@ -35,6 +35,7 @@ KEEP = [
     "vote_average",
     "vote_count",
     "popularity",
+    "release_date"
 ]
 tmdb = tmdb[KEEP]
 tmdb = tmdb[tmdb["vote_count"] > 30]
