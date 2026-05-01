@@ -3,106 +3,138 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+from pathlib import Path
 
-# =========================
-# CONFIG
-# =========================
-
-RAW_TMDB_FILE_PATH = "../datasets/raw/tmdb-movies/TMDB_movie_dataset_v11.csv"
-RAW_MOVIELENS_LINKS_PATH = "../datasets/raw/ml-32m/links.csv"
-RAW_MOVIELENS_RATINGS_PATH = "../datasets/raw/ml-32m/ratings.csv"
-
-CLEAN_TMDB_FILE_PATH = "../datasets/clean/tmdb-movies/TMDB_movie_dataset_v11.csv"
-CLEAN_MOVIELENS_RATINGS_PATH = "../datasets/clean/ml-32m/ratings.csv"
-
-debug=True
-API_TMDB_FILE_PATH = "../../ml-api/datasets/TMDB_movie_dataset_v11.csv"
-API_MOVIELENS_RATINGS_PATH = "../../ml-api/datasets/ratings.csv"
-
-# =========================
-# LOAD TMDB DATA
-# =========================
-# Keep only relevant columns, drop unknow movies
-# fill NaNs and make one mage column for tf-idf transform
-
-tmdb = pd.read_csv(RAW_TMDB_FILE_PATH)
-KEEP = [
-    "id",
-    "title",
-    "overview",
-    "genres",
-    "keywords",
-    "vote_average",
-    "vote_count",
-    "popularity",
-    "release_date"
-]
-tmdb = tmdb[KEEP]
-tmdb = tmdb[tmdb["vote_count"] > 30]
-tmdb["overview"] = tmdb["overview"].fillna("")
-tmdb["genres"] = tmdb["genres"].fillna("")
-tmdb["keywords"] = tmdb["keywords"].fillna("")
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATASET = BASE_DIR / "datasets"
 
 
-tmdb["popularity_log"] = np.log1p(tmdb["popularity"])
-tmdb["content"] = tmdb["overview"] + " " + tmdb["genres"] + " " + tmdb["keywords"]
+def clean_data():
+    # =========================
+    # CONFIG
+    # =========================
 
-# =========================
-# LOAD MOVIELENS LINKS
-# =========================
+    RAW_TMDB_FILE_PATH = BASE_DIR / "datasets/raw/tmdb-movies/TMDB_movie_dataset_v11.csv"
+    RAW_MOVIELENS_LINKS_PATH = BASE_DIR / "datasets/raw/ml-32m/links.csv"
+    RAW_MOVIELENS_RATINGS_PATH = BASE_DIR / "datasets/raw/ml-32m/ratings.csv"
 
-movie_lens_links = pd.read_csv(RAW_MOVIELENS_LINKS_PATH)
+    CLEAN_TMDB_FILE_PATH = BASE_DIR / "datasets/clean/tmdb-movies/TMDB_movie_dataset_v11.csv"
+    CLEAN_MOVIELENS_RATINGS_PATH = BASE_DIR / "datasets/clean/ml-32m/ratings.csv"
 
-movie_lens_links = movie_lens_links[movie_lens_links["tmdbId"].notna()]
-movie_lens_links["tmdbId"] = movie_lens_links["tmdbId"].astype("int64")
+    debug=True
+    API_TMDB_FILE_PATH = BASE_DIR / "../ml-api/datasets/TMDB_movie_dataset_v11.csv"
+    API_MOVIELENS_RATINGS_PATH = BASE_DIR / "../ml-api/datasets/ratings.csv"
 
-# =========================
-# LOAD MOVIELENS RATINGS
-# =========================
-# Merge ratings with ids from tmdb
-# and drop those movies which have less than 5 rating
+    # =========================
+    # LOAD TMDB DATA
+    # =========================
+    # Keep only relevant columns, drop unknow movies
+    # fill NaNs and make one mage column for tf-idf transform
 
-movie_lens_ratings = pd.read_csv(RAW_MOVIELENS_RATINGS_PATH)
-ratings = pd.merge(
-    movie_lens_ratings[['userId', 'rating', 'movieId']],
-    movie_lens_links[['movieId', 'tmdbId']],
-    on='movieId',
-    how='left'
-)
+    tmdb = pd.read_csv(RAW_TMDB_FILE_PATH)
+    KEEP = [
+        "id",
+        "title",
+        "overview",
+        "genres",
+        "keywords",
+        "vote_average",
+        "vote_count",
+        "popularity",
+        "release_date",
+        "runtime",
+        "original_language",
+        "poster_path"
+    ]
+    tmdb = tmdb[KEEP]
+    tmdb = tmdb[tmdb["vote_count"] > 30]
+    tmdb["overview"] = tmdb["overview"].fillna("")
+    tmdb["genres"] = tmdb["genres"].fillna("")
+    tmdb["keywords"] = tmdb["keywords"].fillna("")
 
-ratings = ratings[ratings["tmdbId"].notna()]
-ratings["tmdbId"] = ratings["tmdbId"].astype("int64")
 
-min_user_ratings = 5
-min_movie_ratings = 5
+    tmdb["popularity_log"] = np.log1p(tmdb["popularity"])
+    tmdb["content"] = tmdb["overview"] + " " + tmdb["genres"] + " " + tmdb["keywords"]
 
-user_counts = ratings.groupby('userId').size()
-movie_counts = ratings.groupby('tmdbId').size()
+    # =========================
+    # LOAD MOVIELENS LINKS
+    # =========================
 
-rating = ratings[
-    ratings['userId'].isin(user_counts[user_counts >= min_user_ratings].index) &
-    ratings['tmdbId'].isin(movie_counts[movie_counts >= min_movie_ratings].index)
-]
+    movie_lens_links = pd.read_csv(RAW_MOVIELENS_LINKS_PATH)
 
-# =========================
-# SAVE CLEANED CSV FILES
-# =========================
-def ensure_dir(file_path):
-    """Create directory if it doesn't exist"""
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    movie_lens_links = movie_lens_links[movie_lens_links["tmdbId"].notna()]
+    movie_lens_links["tmdbId"] = movie_lens_links["tmdbId"].astype("int64")
 
-ensure_dir(CLEAN_TMDB_FILE_PATH)
-tmdb.to_csv(CLEAN_TMDB_FILE_PATH, index=False)
-print(f"✅ TMDB cleaned CSV saved: {CLEAN_TMDB_FILE_PATH}")
-if(not debug):
-    ensure_dir(API_TMDB_FILE_PATH)
-    tmdb.to_csv(API_TMDB_FILE_PATH, index=False)
-    print(f"✅ TMDB cleaned CSV saved: {API_TMDB_FILE_PATH}")
+    # =========================
+    # LOAD MOVIELENS RATINGS
+    # =========================
+    # Merge ratings with ids from tmdb
+    # and drop those movies which have less than 5 rating
 
-ensure_dir(CLEAN_MOVIELENS_RATINGS_PATH)
-rating.to_csv(CLEAN_MOVIELENS_RATINGS_PATH, index=False)
-print(f"✅ MovieLens ratings CSV saved: {CLEAN_MOVIELENS_RATINGS_PATH}")
-if(not debug):
-    ensure_dir(API_MOVIELENS_RATINGS_PATH)
-    rating.to_csv(API_MOVIELENS_RATINGS_PATH, index=False)
-    print(f"✅ MovieLens ratings CSV saved: {API_MOVIELENS_RATINGS_PATH}")
+    movie_lens_ratings = pd.read_csv(RAW_MOVIELENS_RATINGS_PATH)
+    ratings = pd.merge(
+        movie_lens_ratings[['userId', 'rating', 'movieId']],
+        movie_lens_links[['movieId', 'tmdbId']],
+        on='movieId',
+        how='left'
+    )
+
+    ratings = ratings[ratings["tmdbId"].notna()]
+    ratings["tmdbId"] = ratings["tmdbId"].astype("int64")
+
+    min_user_ratings = 5
+    min_movie_ratings = 5
+
+    user_counts = ratings.groupby('userId').size()
+    movie_counts = ratings.groupby('tmdbId').size()
+
+
+    # =========================
+    # AGGREGATE DATA
+    # =========================
+    # Drop movies from imdb that are not in ratings
+    # And vice versa
+
+    movie_stats = ratings.groupby("tmdbId").agg(
+        avg=("rating", "mean"),
+        count=("rating", "count")
+    )
+    good_movies = set(movie_stats[movie_stats["count"] >= 2].index)
+    tmdb_ids = set(tmdb["id"])
+    valid_movie_ids = good_movies.intersection(tmdb_ids)
+    ratings = ratings[ratings["tmdbId"].isin(valid_movie_ids)].copy()
+    tmdb = tmdb[tmdb["id"].isin(valid_movie_ids)].copy()
+
+    tmdb = tmdb.reset_index(drop=True)
+    tmdb_id_to_index = pd.Series(tmdb.index, index=tmdb["id"]).to_dict()
+
+    ratings_glob_mean = 2.5
+    ratings["rating"] = ratings["rating"] - ratings_glob_mean
+
+    rating = ratings[
+        ratings['userId'].isin(user_counts[user_counts >= min_user_ratings].index) &
+        ratings['tmdbId'].isin(movie_counts[movie_counts >= min_movie_ratings].index)
+    ]
+
+    # =========================
+    # SAVE CLEANED CSV FILES
+    # =========================
+    def ensure_dir(file_path):
+        """Create directory if it doesn't exist"""
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+    ensure_dir(CLEAN_TMDB_FILE_PATH)
+    tmdb.to_csv(CLEAN_TMDB_FILE_PATH, index=False)
+    print(f"✅ TMDB cleaned CSV saved: {CLEAN_TMDB_FILE_PATH}")
+    if(not debug):
+        ensure_dir(API_TMDB_FILE_PATH)
+        tmdb.to_csv(API_TMDB_FILE_PATH, index=False)
+        print(f"✅ TMDB cleaned CSV saved: {API_TMDB_FILE_PATH}")
+
+    ensure_dir(CLEAN_MOVIELENS_RATINGS_PATH)
+    rating.to_csv(CLEAN_MOVIELENS_RATINGS_PATH, index=False)
+    print(f"✅ MovieLens ratings CSV saved: {CLEAN_MOVIELENS_RATINGS_PATH}")
+    if(not debug):
+        ensure_dir(API_MOVIELENS_RATINGS_PATH)
+        rating.to_csv(API_MOVIELENS_RATINGS_PATH, index=False)
+        print(f"✅ MovieLens ratings CSV saved: {API_MOVIELENS_RATINGS_PATH}")
