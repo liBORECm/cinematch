@@ -19,3 +19,20 @@ def recommend_content_based():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+
+@bp.route("/api/v1/recommend_collaborative", methods=["POST"])
+def recommend_collaborative():
+    data = request.get_json()
+
+    ratings = data.get("ratings", [])
+    k = data.get("k", 20)
+
+    print(f"Received request for collab: \n    k: {k}\n    ratings: {ratings}")
+
+    try:
+        result = collaborative_recommender.recommend(ratings, k)
+        print(f"Returning predicted: {result}")
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
