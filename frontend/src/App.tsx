@@ -18,7 +18,8 @@ function App() {
 
   const [ratedMovies, setRatedMovies] = useState<RatedMovie[]>([])
   
-  const [recommendations, setRecommendations] = useState<Movie[]>([])
+  const [recommendationsContent, setRecommendationsContent] = useState<Movie[]>([])
+  const [recommendationsCollab, setRecommendationsCollab] = useState<Movie[]>([])
   const [isRecommending, setIsRecommending] = useState(false)
 
   // --- ACTIONS ---
@@ -77,10 +78,13 @@ function App() {
         imdbId: rm.movie.id,
         rating: rm.rating,
       }))
-      
       const profile = new UserProfile(ratingsPayload)
-      const results = await Service.recommendContentBased(profile)
-      setRecommendations(results)
+      
+      const resultsContent = await Service.recommendContentBased(profile)
+      setRecommendationsContent(resultsContent)
+
+      const resultsCollab = await Service.recommendCollab(profile)
+      setRecommendationsCollab(resultsCollab)
     } catch (error) {
       console.error("Chyba při získávání doporučení:", error)
     } finally {
@@ -164,18 +168,53 @@ function App() {
       </div>
 
       {/* PRAVÝ SLOUPEC: Doporučení */}
-      <div className="section-recommendations" style={{ flex: 1, borderLeft: '1px solid #eee', paddingLeft: '2rem' }}>
-        <h2>Doporučeno pro tebe</h2>
-        {recommendations.length === 0 && !isRecommending ? (
+      <div
+        className="section-recommendations"
+        style={{
+          flex: 1,
+          borderLeft: '1px solid #eee',
+          paddingLeft: '2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem'
+        }}
+      >
+        <h2>Doporučeno pro tebe content</h2>
+
+        {recommendationsContent.length === 0 && !isRecommending ? (
           <p>Klikni na tlačítko pro získání doporučení na základě tvého vkusu.</p>
         ) : (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {recommendations.map((movie) => (
-              <li key={movie.id} style={{ padding: '0.5rem 0', borderBottom: '1px dotted #ccc' }}>
-                ⭐ {movie.title}
-              </li>
-            ))}
-          </ul>
+          <>
+            {/* PRVNÍ POLOVINA */}
+            <div style={{ flex: 1 }}>
+              <h4>Seznam 1</h4>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {recommendationsContent.map((movie) => (
+                  <li key={`top-${movie.id}`} style={{ padding: '0.5rem 0', borderBottom: '1px dotted #ccc' }}>
+                    ⭐ {movie.title}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
+
+        {recommendationsContent.length === 0 && !isRecommending ? (
+          <p>hahhaaaaaa collab</p>
+        ) : (
+          <>
+            {/* DRUHÁ POLOVINA */}
+            <div style={{ flex: 1 }}>
+              <h4>Seznam 2</h4>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {recommendationsContent.map((movie) => (
+                  <li key={`bottom-${movie.id}`} style={{ padding: '0.5rem 0', borderBottom: '1px dotted #ccc' }}>
+                    ⭐ {movie.title}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
         )}
       </div>
 
