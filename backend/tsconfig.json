@@ -36,7 +36,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
