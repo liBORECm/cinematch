@@ -15,7 +15,7 @@ class ContentBasedRecommender {
         },
         body: JSON.stringify({
           ratings: userProfile.toDict(),
-          k: 10,
+          k: 2,
         }),
       },
     )
