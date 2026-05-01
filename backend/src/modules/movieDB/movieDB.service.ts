@@ -12,12 +12,19 @@ class MovieDB {
   private movies: Movie[] = []
 
   constructor() {
-    const fullPath = config.tmdbCSVPath;
+    console.log('[MovieDB] Initializing...')
+
+    const fullPath = config.tmdbCSVPath
+    console.log('[MovieDB] CSV path:', fullPath)
+
     if (!fs.existsSync(fullPath)) {
-      throw new Error(`CSV file not found at path: ${fullPath}`);
+      console.error('[MovieDB] ❌ CSV file not found!')
+      throw new Error(`CSV file not found at path: ${fullPath}`)
     }
 
     const csvContent = fs.readFileSync(fullPath, 'utf-8')
+    console.log('[MovieDB] CSV loaded, parsing...')
+
     this.movies = parse(csvContent, {
       columns: true,
       skip_empty_lines: true,
@@ -25,13 +32,15 @@ class MovieDB {
       id: Number(row.imdbId || row.id),
       title: row.title,
       overview: row.overview,
-      genres: row.genres.split(", "),
-      keywords: row.keywords.split(", "),
+      genres: row.genres.split(', '),
+      keywords: row.keywords.split(', '),
       release_date: new Date(row.release_date),
       runtime: Number(row.runtime),
       original_language: row.original_language,
       poster_path: row.poster_path,
     }))
+
+    console.log(`[MovieDB] ✅ Loaded ${this.movies.length} movies`)
   }
 
   public getAll(
@@ -39,26 +48,41 @@ class MovieDB {
     offset: number | undefined = undefined,
     filters: Filters | undefined = undefined,
   ): Movie[] {
+    console.log('[MovieDB] getAll called', { limit, offset, filters })
+
     let result = this.movies
 
-    if (filters) {
-      const { title } = filters
-      if (title) {
-        const titleLower = title.toLowerCase()
-        result = result.filter((m) => m.title.toLowerCase().includes(titleLower))
-      }
+    if (filters?.title) {
+      const titleLower = filters.title.toLowerCase()
+      const before = result.length
+
+      result = result.filter((m) =>
+        m.title.toLowerCase().includes(titleLower),
+      )
+
+      console.log(`[MovieDB] title filter "${filters.title}": ${before} → ${result.length}`)
     }
 
     offset = offset ?? 0
     limit = limit ?? 100
 
-    return result.slice(offset, offset + limit)
+    const sliced = result.slice(offset, offset + limit)
+
+    console.log(`[MovieDB] pagination offset=${offset}, limit=${limit}, returned=${sliced.length}`)
+
+    return sliced
   }
 
-  public get(
-    id: number
-  ): Movie | undefined {
-    return this.movies.find((val) => val.id === id)
+  public get(id: number): Movie | undefined {
+    console.log(`[MovieDB] get movie id=${id}`)
+
+    const movie = this.movies.find((val) => val.id === id)
+
+    if (!movie) {
+      console.log(`[MovieDB] ❌ movie id=${id} not found`)
+    }
+
+    return movie
   }
 }
 
