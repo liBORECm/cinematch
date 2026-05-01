@@ -66,7 +66,7 @@ export class Service {
     userProfile: UserProfile,
   ): Promise<Array<Movie>> {
     const result = await fetch(
-      `${Service.BACKEND_URL}/api/v1/content-based/recommend`,
+      `${Service.BACKEND_URL}/api/v1/collab/recommend`,
       {
         method: 'POST',
         body: JSON.stringify({
