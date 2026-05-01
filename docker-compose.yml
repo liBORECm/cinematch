@@ -11,11 +11,3 @@ services:
     build: ./ml-api
     ports:
       - "5000:5000"
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "8080:80"
-
-volumes:
-  db_data:

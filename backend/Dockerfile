@@ -9,4 +9,5 @@ COPY . .
 
 EXPOSE 7777
 
-CMD ["npm", "run", "dev"]
+RUN npm run build
+CMD ["node", "dist/index.js"]
