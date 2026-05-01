@@ -1,8 +1,8 @@
 import type { Movie } from './models/movie'
 import type { UserProfile } from './models/userProfile'
 
-export class DataManager {
-  private static BACKEND_URL = 'http://localhost:7777'
+export class Service {
+  private static BACKEND_URL = import.meta.env.VITE_BE_URL
 
   private static getVars(obj: Record<string, unknown>): string {
     if (Object.keys(obj).length === 0) {
@@ -26,9 +26,9 @@ export class DataManager {
     title: string | undefined = undefined,
   ): Promise<Array<Movie>> {
     const vars = this.getVars({ limit, offset, title })
-    console.log(DataManager.BACKEND_URL)
+    console.log(Service.BACKEND_URL)
     const result = await fetch(
-      `${DataManager.BACKEND_URL}/api/v1/movie-db${vars}`,
+      `${Service.BACKEND_URL}/api/v1/movie-db${vars}`,
       {
         method: 'GET',
       },
@@ -44,7 +44,29 @@ export class DataManager {
     userProfile: UserProfile,
   ): Promise<Array<Movie>> {
     const result = await fetch(
-      `${DataManager.BACKEND_URL}/api/v1/content-based/recommend`,
+      `${Service.BACKEND_URL}/api/v1/content-based/recommend`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          ratings: userProfile.movieRatings,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+
+    const data = await result.json()
+    if (!result.ok) return []
+
+    return data
+  }
+
+  public static async recommendCollab(
+    userProfile: UserProfile,
+  ): Promise<Array<Movie>> {
+    const result = await fetch(
+      `${Service.BACKEND_URL}/api/v1/content-based/recommend`,
       {
         method: 'POST',
         body: JSON.stringify({

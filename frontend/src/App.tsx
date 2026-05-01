@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { DataManager } from './DataManager' // Uprav cestu podle tvé struktury
+import { Service } from './Service' // Uprav cestu podle tvé struktury
 import { Movie } from './models/movie'
 import { UserProfile } from './models/userProfile'
 import './App.css'
@@ -32,7 +32,7 @@ function App() {
       }
       setIsSearching(true)
       try {
-        const results = await DataManager.getMovies(10, 0, searchQuery)
+        const results = await Service.getMovies(10, 0, searchQuery)
         setSearchResults(results)
       } catch (error) {
         console.error("Chyba při hledání filmů:", error)
@@ -79,7 +79,7 @@ function App() {
       }))
       
       const profile = new UserProfile(ratingsPayload)
-      const results = await DataManager.recommendContentBased(profile)
+      const results = await Service.recommendContentBased(profile)
       setRecommendations(results)
     } catch (error) {
       console.error("Chyba při získávání doporučení:", error)
