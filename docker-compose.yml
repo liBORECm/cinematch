@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+
+  backend:
+    build: ./backend
+    ports:
+      - "7777:7777"
+
+  ml-api:
+    build: ./ml-api
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "443:443"
+
+volumes:
+  db_data:
