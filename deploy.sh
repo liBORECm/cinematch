@@ -1,6 +1,5 @@
 #!/bin/bash
 
-source ./sandbox/scripts/.venv/bin/activate
 pip install -r ./sandbox/scripts/requirements.txt
 python3 ./sandbox/scripts/pipeline.py
 
