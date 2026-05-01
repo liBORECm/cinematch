@@ -11,3 +11,5 @@ __pycache__
 node_modules
 .env
 backend/src/datasets/*
+
+backend/dist
