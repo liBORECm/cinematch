@@ -9,7 +9,7 @@ import os
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
-TF_IDF_MATRIX_PATH = BASE_DIR / "../model/tf_idf_matrix.pkl"
+TF_IDF_MATRIX_PATH = BASE_DIR / "../../model/tfidf.pkl"
 TMDB_CSV_PATH = Path(os.getenv("TMDB_CSV_PATH"))
 
 class ContenBasedRecommender:

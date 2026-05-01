@@ -9,9 +9,9 @@ import os
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
-MOVIE_MAP_PATH = BASE_DIR / "../model/movie_map.pkl"
-V_PATH = BASE_DIR / "../model/V.pkl"
-U_PATH = BASE_DIR / "../model/U.pkl"
+MOVIE_MAP_PATH = BASE_DIR / "../../model/movie_map.pkl"
+V_PATH = BASE_DIR / "../../model/V.pkl"
+U_PATH = BASE_DIR / "../../model/U.pkl"
 RATINGS_CSV_PATH = Path(os.getenv("RATINGS_CSV_PATH"))
 TMDB_CSV_PATH = Path(os.getenv("TMDB_CSV_PATH"))
 
