@@ -56,7 +56,9 @@ class ContenBasedRecommender:
         results["rank"] = results["match_score"].rank(ascending=False).astype(int)
         results["percentile"] = results["match_score"].rank(pct=True) * 100
 
-        return results.to_dict(orient="records")
+        top_results = results.sort_values(by="match_score", ascending=False).head(k)
+
+        return top_results.to_dict(orient="records")
 
 
 content_based_recommender = ContenBasedRecommender()
