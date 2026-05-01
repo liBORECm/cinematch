@@ -76,3 +76,13 @@ def train_models():
   joblib.dump(user_map, MODEL_DIR + "user_map.pkl")
   joblib.dump(movie_map, MODEL_DIR + "movie_map.pkl")
   joblib.dump(tmdb, MODEL_DIR + "movies_metadata.pkl")
+
+
+  print("DONT FORGET TO COPY:")
+  print(MODEL_DIR + "U.pkl")
+  print(MODEL_DIR + "V.pkl")
+  print(MODEL_DIR + "tfidf.pkl")
+  print(MODEL_DIR + "tfidf_vectorizer.pkl")
+  print(MODEL_DIR + "user_map.pkl")
+  print(MODEL_DIR + "movie_map.pkl")
+  print(MODEL_DIR + "movies_metadata.pkl")

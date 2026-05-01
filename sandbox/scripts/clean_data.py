@@ -138,3 +138,5 @@ def clean_data():
         ensure_dir(API_MOVIELENS_RATINGS_PATH)
         rating.to_csv(API_MOVIELENS_RATINGS_PATH, index=False)
         print(f"✅ MovieLens ratings CSV saved: {API_MOVIELENS_RATINGS_PATH}")
+
+    print("DONT FORGET TO COPY")
