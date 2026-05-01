@@ -13,8 +13,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def train_models():
-  CLEAN_TMDB_FILE_PATH = BASE_DIR / "/datasets/clean/tmdb-movies/TMDB_movie_dataset_v11.csv"
-  CLEAN_MOVIELENS_RATINGS_PATH = BASE_DIR / "/datasets/clean/ml-32m/ratings.csv"
+  CLEAN_TMDB_FILE_PATH = BASE_DIR / "datasets/clean/tmdb-movies/TMDB_movie_dataset_v11.csv"
+  CLEAN_MOVIELENS_RATINGS_PATH = BASE_DIR / "datasets/clean/ml-32m/ratings.csv"
+  MODEL_DIR = "../../ml-api/model/"
+
 
   tmdb_og = pd.read_csv(CLEAN_TMDB_FILE_PATH)
   ratings_og = pd.read_csv(CLEAN_MOVIELENS_RATINGS_PATH)
@@ -65,7 +67,6 @@ def train_models():
   V = svd.components_
 
 
-  MODEL_DIR = "../../ml-api/model/"
   os.makedirs(MODEL_DIR, exist_ok=True)
 
   joblib.dump(U, MODEL_DIR + "U.pkl")

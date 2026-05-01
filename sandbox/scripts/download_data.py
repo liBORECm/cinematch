@@ -10,12 +10,12 @@ def download_data():
     # ========== CONFIG ==========
     
     movielens_url = "https://files.grouplens.org/datasets/movielens/ml-32m.zip"
-    movielens_zip = BASE_DIR / "/datasets/raw/ml-32m.zip"
-    movielens_dir = BASE_DIR / "/datasets/raw"
+    movielens_zip = BASE_DIR / "datasets/raw/ml-32m.zip"
+    movielens_dir = BASE_DIR / "datasets/raw"
     movielens_to_remove = ["tags.csv", "README.txt", "movies.csv", "checksums.txt"]
 
     kaggle_dataset = "asaniczka/tmdb-movies-dataset-2023-930k-movies"
-    kaggle_dir = BASE_DIR / "/datasets/raw/tmdb-movies"
+    kaggle_dir = BASE_DIR / "datasets/raw/tmdb-movies"
 
     # ============================
 
