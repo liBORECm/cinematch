@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 def train_models():
   CLEAN_TMDB_FILE_PATH = BASE_DIR / "datasets/clean/tmdb-movies/TMDB_movie_dataset_v11.csv"
   CLEAN_MOVIELENS_RATINGS_PATH = BASE_DIR / "datasets/clean/ml-32m/ratings.csv"
-  MODEL_DIR = "../../ml-api/model/"
+  MODEL_DIR = BASE_DIR / "../ml-api/model/"
 
 
   tmdb_og = pd.read_csv(CLEAN_TMDB_FILE_PATH)
@@ -69,20 +69,20 @@ def train_models():
 
   os.makedirs(MODEL_DIR, exist_ok=True)
 
-  joblib.dump(U, MODEL_DIR + "U.pkl")
-  joblib.dump(V, MODEL_DIR + "V.pkl")
-  joblib.dump(tfidf_matrix, MODEL_DIR + "tfidf.pkl")
-  joblib.dump(tfidf, MODEL_DIR + "tfidf_vectorizer.pkl")
-  joblib.dump(user_map, MODEL_DIR + "user_map.pkl")
-  joblib.dump(movie_map, MODEL_DIR + "movie_map.pkl")
-  joblib.dump(tmdb, MODEL_DIR + "movies_metadata.pkl")
+  joblib.dump(U, MODEL_DIR / "U.pkl")
+  joblib.dump(V, MODEL_DIR / "V.pkl")
+  joblib.dump(tfidf_matrix, MODEL_DIR / "tfidf.pkl")
+  joblib.dump(tfidf, MODEL_DIR / "tfidf_vectorizer.pkl")
+  joblib.dump(user_map, MODEL_DIR / "user_map.pkl")
+  joblib.dump(movie_map, MODEL_DIR / "movie_map.pkl")
+  joblib.dump(tmdb, MODEL_DIR / "movies_metadata.pkl")
 
 
   print("DONT FORGET TO COPY:")
-  print(MODEL_DIR + "U.pkl")
-  print(MODEL_DIR + "V.pkl")
-  print(MODEL_DIR + "tfidf.pkl")
-  print(MODEL_DIR + "tfidf_vectorizer.pkl")
-  print(MODEL_DIR + "user_map.pkl")
-  print(MODEL_DIR + "movie_map.pkl")
-  print(MODEL_DIR + "movies_metadata.pkl")
+  print(MODEL_DIR / "U.pkl")
+  print(MODEL_DIR / "V.pkl")
+  print(MODEL_DIR / "tfidf.pkl")
+  print(MODEL_DIR / "tfidf_vectorizer.pkl")
+  print(MODEL_DIR / "user_map.pkl")
+  print(MODEL_DIR / "movie_map.pkl")
+  print(MODEL_DIR / "movies_metadata.pkl")
