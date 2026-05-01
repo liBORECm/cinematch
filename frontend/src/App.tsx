@@ -199,7 +199,7 @@ function App() {
           </>
         )}
 
-        {recommendationsContent.length === 0 && !isRecommending ? (
+        {recommendationsCollab.length === 0 && !isRecommending ? (
           <p>hahhaaaaaa collab</p>
         ) : (
           <>
@@ -207,7 +207,7 @@ function App() {
             <div style={{ flex: 1 }}>
               <h4>Seznam 2</h4>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                {recommendationsContent.map((movie) => (
+                {recommendationsCollab.map((movie) => (
                   <li key={`bottom-${movie.id}`} style={{ padding: '0.5rem 0', borderBottom: '1px dotted #ccc' }}>
                     ⭐ {movie.title}
                   </li>
