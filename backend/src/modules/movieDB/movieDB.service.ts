@@ -24,6 +24,13 @@ class MovieDB {
     }).map((row: any) => ({
       id: Number(row.imdbId || row.id),
       title: row.title,
+      overview: row.overview,
+      genres: row.genres.split(", "),
+      keywords: row.keywords.split(", "),
+      release_date: new Date(row.release_date),
+      runtime: Number(row.runtime),
+      original_language: row.original_language,
+      poster_path: row.poster_path,
     }))
   }
 
@@ -46,6 +53,12 @@ class MovieDB {
     limit = limit ?? 100
 
     return result.slice(offset, offset + limit)
+  }
+
+  public get(
+    id: number
+  ): Movie | undefined {
+    return this.movies.find((val) => val.id === id)
   }
 }
 

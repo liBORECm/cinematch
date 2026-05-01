@@ -1,6 +1,7 @@
 import config from '../../config/config'
 import { Movie } from '../../models/movie'
 import { UserProfile } from '../../models/userProfile'
+import { movieDB } from '../movieDB/movieDB.service'
 
 class CollaborativeRecommender {
   public async recommend(
@@ -24,7 +25,7 @@ class CollaborativeRecommender {
     if (!result.ok) return Promise.reject(data.error)
 
     const movies = data
-      .map((movieObj: any) => Movie.GetMovie(movieObj))
+      .map((movieObj: any) => movieDB.get(movieObj))
       .filter((movie: Movie | null) => movie !== null)
 
     return movies
