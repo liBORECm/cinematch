@@ -4,27 +4,35 @@ import { UserProfile } from "../../models/userProfile"
 
 const router = Router()
 
-//TODO this route should be get and it should load saved usersprofile
-//also smthing like post usersprofile should be here or somewhere
 router.post(`/recommend`, async (req, res) => {
+  console.log("[content.controller] /recommend called")
+
   let ratingsArray: Array<{ imdbId: number; rating: number }> = []
 
   const ratingsRaw = req.body.ratings
-  console.log(typeof(ratingsRaw))
-  console.log(ratingsRaw)
+  console.log("[content.controller] raw ratings:", ratingsRaw)
   
   try {
-    console.log(ratingsRaw, typeof(ratingsRaw))
     ratingsArray = ratingsRaw
+    if (!Array.isArray(ratingsArray)) {
+      throw new Error("ratings is not an array")
+    }
   } catch (err) {
-    return res.status(400).json({error: 'Invalid ratings JSON'})
+    console.error("[content.controller] Invalid ratings JSON:", err)
+    return res.status(400).json({ error: "Invalid ratings JSON" })
   }
 
   try {
-    const recommendations = await contentBasedRecommender.recommend(new UserProfile(ratingsArray))
+    console.log("[content.controller] creating UserProfile")
+    const recommendations = await contentBasedRecommender.recommend(
+      new UserProfile(ratingsArray)
+    )
+
+    console.log("[content.controller] recommendations OK:", recommendations.length)
     res.status(200).json(recommendations)
   } catch (e) {
-    res.status(500).json({error: "idk"})
+    console.error("[content.controller] ERROR during recommend:", e)
+    res.status(500).json({ error: "Recommendation failed", details: e })
   }
 })
 
