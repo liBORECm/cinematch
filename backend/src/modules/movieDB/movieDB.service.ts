@@ -2,20 +2,19 @@ import fs from 'fs'
 import path from 'path'
 import { parse } from 'csv-parse/sync'
 import type { Movie } from '../../models/movie'
+import config from '../../config/config'
 
 export interface Filters {
   title: string | undefined
 }
 
-const IMDB_CSV_PATH = "src/datasets/TMDB_movie_dataset_v11.csv"
-
 class MovieDB {
   private movies: Movie[] = []
 
   constructor() {
-    const fullPath = path.resolve(IMDB_CSV_PATH)
+    const fullPath = config.tmdbCSVPath;
     if (!fs.existsSync(fullPath)) {
-      throw new Error(`CSV file not found at path: ${fullPath}`)
+      throw new Error(`CSV file not found at path: ${fullPath}`);
     }
 
     const csvContent = fs.readFileSync(fullPath, 'utf-8')
