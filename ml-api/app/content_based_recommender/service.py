@@ -3,10 +3,14 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 TF_IDF_MATRIX_PATH = BASE_DIR / "../../model/tf_idf_matrix.pkl"
-TMDB_CSV_PATH = BASE_DIR / "../../datasets/TMDB_movie_dataset_v11.csv"
+TMDB_CSV_PATH = Path(os.getenv("TMDB_CSV_PATH"))
 
 class ContenBasedRecommender:
     def __init__(self):
@@ -31,40 +35,28 @@ class ContenBasedRecommender:
         user_profile = np.sum(vectors * weights[:, np.newaxis], axis=0)
         user_profile = user_profile.reshape(1, -1)
 
-        return user_profile
+        return {
+            "vector": user_profile,
+            "method": "content"
+        }
 
     def recommend(self, ratings, k):
         ##Rating are expected to be from 0 to 5
         ##TODO do a check
         k_temp = k + len(ratings.items())
-        user_vector = self.build_user_profile(ratings)
+        user_vector = self.build_user_profile(ratings)["vector"]
         sims = cosine_similarity(user_vector, self.tfidf_matrix).flatten()
-        top_idx = sims.argsort()[-k_temp:][::-1]
-
-        rated_ids = set(int(tmdb_id) for tmdb_id in ratings.keys())
-        filtered_idx = []
-        for idx in top_idx:
-            movie_id = self.tmdb.iloc[idx]["id"]
-
-            if movie_id not in rated_ids:
-                filtered_idx.append(idx)
-
-        results = self.tmdb.iloc[filtered_idx][["title", "vote_average", "id"]]
-
-        return results.to_dict(orient="records")
-    
-    def check_recommended(self, ratings, movie_id):
-        user_vector = self.build_user_profile(ratings)
-        sims = cosine_similarity(user_vector, self.tfidf_matrix).flatten()
-        
         weighted_sims = sims * self.tmdb["popularity_log"].values
         results = self.tmdb[["id", "title", "vote_average", "popularity"]].copy()
         results["match_score"] = weighted_sims
+        
+        rated_movie_ids = set(ratings.keys())
+        results = results[~results["id"].isin(rated_movie_ids)]
 
         results["rank"] = results["match_score"].rank(ascending=False).astype(int)
         results["percentile"] = results["match_score"].rank(pct=True) * 100
 
-        return results[results["id"] == movie_id][0]
+        return results.to_dict(orient="records")
 
 
 content_based_recommender = ContenBasedRecommender()
