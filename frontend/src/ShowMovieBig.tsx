@@ -11,12 +11,14 @@ import { useState } from 'react'
 import { UserProfile } from './models/userProfile'
 import RateDialog from './RateDialog'
 import ShowMovieBigBig from './ShowMovieBigBig'
+import type { LogAgent } from './LogService'
 
 export default function ShowMovieBig(props: {
   movie: Movie
   width: string
   profile: UserProfile
   setProfile: (newProfile: UserProfile) => void
+  logAgent: LogAgent
 }) {
   const [openBigBig, setOpenBigBig] = useState(false)
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(
@@ -102,6 +104,7 @@ export default function ShowMovieBig(props: {
               ]),
             )
           }
+          logAgent={props.logAgent}
         />
       )}
     </Box>

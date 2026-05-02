@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, Grid, Button } from '@mui/material'
 import ShowMovieBig from './ShowMovieBig'
 import type { UserProfile } from './models/userProfile'
+import { Service } from './Service'
 
 export default function ShowRecommended(props: {
   recommendedContent: Array<{ movie: Movie; seen: boolean }>
@@ -12,7 +13,6 @@ export default function ShowRecommended(props: {
   profile: UserProfile
   setProfile: (haaa: UserProfile) => void
 }) {
-
   useEffect(() => {
     const unseenContent = props.recommendedContent.filter(
       (item) => !item.seen,
@@ -21,23 +21,41 @@ export default function ShowRecommended(props: {
       (item) => !item.seen,
     )
 
-    if (unseenContent.length === 0 && props.recommendedContent.length !== 0) {
+    if (
+      unseenContent.length === 0 &&
+      props.recommendedContent.length !== 0
+    ) {
       props.makeUnseenContent()
     }
 
-    if (unseenCollab.length === 0 && props.recommendedCollab.length !== 0) {
+    if (
+      unseenCollab.length === 0 &&
+      props.recommendedCollab.length !== 0
+    ) {
       props.makeUnseenCollab()
     }
   }, [props])
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row', maxHeight: "80vh"}}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        maxHeight: '80vh',
+      }}
+    >
       <Box>
         {props.recommendedCollab
           .filter((item) => !item.seen)
           .slice(0, 2)
           .map((movieBox) => (
-            <ShowMovieBig movie={movieBox.movie} width='400px' profile={props.profile} setProfile={props.setProfile}/>
+            <ShowMovieBig
+              logAgent={Service.LogAgentRecommenderCollab}
+              movie={movieBox.movie}
+              width="400px"
+              profile={props.profile}
+              setProfile={props.setProfile}
+            />
           ))}
       </Box>
 
@@ -46,7 +64,13 @@ export default function ShowRecommended(props: {
           .filter((item) => !item.seen)
           .slice(0, 2)
           .map((movieBox) => (
-            <ShowMovieBig movie={movieBox.movie} width='400px' profile={props.profile} setProfile={props.setProfile}/>
+            <ShowMovieBig
+              logAgent={Service.LogAgentRecommenderContent}
+              movie={movieBox.movie}
+              width="400px"
+              profile={props.profile}
+              setProfile={props.setProfile}
+            />
           ))}
       </Box>
     </Box>

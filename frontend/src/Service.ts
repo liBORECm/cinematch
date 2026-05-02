@@ -1,8 +1,16 @@
 import type { Movie } from './models/movie'
 import type { UserProfile } from './models/userProfile'
+import { LogAgent } from './LogService'
 
 export class Service {
   private static BACKEND_URL = import.meta.env.VITE_BE_URL
+
+  public static LogAgentRecommenderCollab = new LogAgent(
+    '[Recommender Collab]',
+  )
+  public static LogAgentRecommenderContent = new LogAgent(
+    '[Recommender Content]',
+  )
 
   private static getVars(obj: Record<string, unknown>): string {
     if (Object.keys(obj).length === 0) {
@@ -48,7 +56,9 @@ export class Service {
       {
         method: 'POST',
         body: JSON.stringify({
-          ratings: userProfile.movieRatings.map(({movie, rating}) => ({imdbId: movie.id, rating})),
+          ratings: userProfile.movieRatings.map(
+            ({ movie, rating }) => ({ imdbId: movie.id, rating }),
+          ),
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -57,6 +67,11 @@ export class Service {
     )
 
     const data = await result.json()
+    Service.LogAgentRecommenderContent.write(
+      `User requested movies. Profile: ${JSON.stringify(userProfile)}`,
+      JSON.stringify(data),
+    )
+
     if (!result.ok) return []
 
     return data
@@ -70,7 +85,9 @@ export class Service {
       {
         method: 'POST',
         body: JSON.stringify({
-          ratings: userProfile.movieRatings.map(({movie, rating}) => ({imdbId: movie.id, rating})),
+          ratings: userProfile.movieRatings.map(
+            ({ movie, rating }) => ({ imdbId: movie.id, rating }),
+          ),
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -79,6 +96,11 @@ export class Service {
     )
 
     const data = await result.json()
+    Service.LogAgentRecommenderCollab.write(
+      `User requested movies. Profile: ${JSON.stringify(userProfile)}`,
+      JSON.stringify(data),
+    )
+
     if (!result.ok) return []
 
     return data

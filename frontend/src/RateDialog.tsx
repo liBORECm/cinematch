@@ -3,12 +3,14 @@ import type { Movie } from "./models/movie";
 import ShowMovie from "./ShowMovie";
 import { useState } from "react";
 import type { Rating } from "./models/rating";
+import type { LogAgent } from "./LogService";
 
 export default function RateDialog(props: {
   openDialog: boolean
   handleDialogClose: () => void
   selectedMovie: Movie
   setRating: (newRating: Rating) => void
+  logAgent?: LogAgent
 }) {
 
   const [userRating, setUserRating] = useState(0)
@@ -57,6 +59,7 @@ export default function RateDialog(props: {
           props.handleDialogClose()
 
           const normalizedRating = userRating / 20
+          if(props.logAgent) props.logAgent.write(`User rated movie from recommendation. Movie: ${JSON.stringify(props.selectedMovie)}`, `${normalizedRating}`)
           props.setRating({
             movie: props.selectedMovie,
             rating: normalizedRating,
