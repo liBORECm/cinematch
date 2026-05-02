@@ -50,7 +50,7 @@ class CollaborativeRecommender {
 
     const movies = data
       .map((movieObj: any) => {
-        const movie = movieDB.get(movieObj)
+        const movie = movieDB.get(movieObj.id)
         if (!movie) {
           console.warn("[collab.service] movie not found in DB:", movieObj)
         }
