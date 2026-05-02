@@ -49,7 +49,7 @@ class ContenBasedRecommender:
         results = self.tmdb[["id", "title", "vote_average", "popularity"]].copy()
         results["match_score"] = weighted_sims
         
-        rated_movie_ids = set(ratings.keys())
+        rated_movie_ids = set(int(id) for id in ratings.keys())
         results = results[~results["id"].isin(rated_movie_ids)]
 
         results["rank"] = results["match_score"].rank(ascending=False).astype(int)

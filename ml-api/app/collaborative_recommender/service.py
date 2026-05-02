@@ -69,7 +69,7 @@ class CollaborativeRecommender:
         results = self.tmdb[["id", "title", "vote_average", "popularity"]].merge(score_df, on="id")
         print(f"Movies after merging: {results.shape[0]}")
 
-        rated_movie_ids = set(ratings.keys())
+        rated_movie_ids = set(int(id) for id in ratings.keys())
         results = results[~results["id"].isin(rated_movie_ids)]
         print(f"Movies not yet rated: {results.shape[0]}")
 
