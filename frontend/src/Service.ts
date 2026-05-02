@@ -48,7 +48,7 @@ export class Service {
       {
         method: 'POST',
         body: JSON.stringify({
-          ratings: userProfile.movieRatings,
+          ratings: userProfile.movieRatings.map(({movie, rating}) => ({imdbId: movie.id, rating})),
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export class Service {
       {
         method: 'POST',
         body: JSON.stringify({
-          ratings: userProfile.movieRatings,
+          ratings: userProfile.movieRatings.map(({movie, rating}) => ({imdbId: movie.id, rating})),
         }),
         headers: {
           'Content-Type': 'application/json',

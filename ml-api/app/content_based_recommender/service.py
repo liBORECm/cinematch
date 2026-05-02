@@ -43,7 +43,6 @@ class ContenBasedRecommender:
     def recommend(self, ratings, k):
         ##Rating are expected to be from 0 to 5
         ##TODO do a check
-        k_temp = k + len(ratings.items())
         user_vector = self.build_user_profile(ratings)["vector"]
         sims = cosine_similarity(user_vector, self.tfidf_matrix).flatten()
         weighted_sims = sims * self.tmdb["popularity_log"].values
