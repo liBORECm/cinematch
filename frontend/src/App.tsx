@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Movie } from './models/movie'
 import { UserProfile } from './models/userProfile'
 import './App.css'
@@ -8,14 +8,31 @@ import ShowRecommended from './ShowRecommended'
 import GetRecommendations from './GetRecommendation'
 
 function App() {
-  const [ratedMovies, setRatedMovies] = useState<UserProfile>(
+  const [profile, _setProfile] = useState<UserProfile>(
     new UserProfile([]),
   )
   const [recommendationsContent, setRecommendationsContent] =
-    useState<Movie[]>([])
+    useState<
+      {
+        movie: Movie
+        seen: boolean
+      }[]
+    >([])
   const [recommendationsCollab, setRecommendationsCollab] = useState<
-    Movie[]
+    {
+      movie: Movie
+      seen: boolean
+    }[]
   >([])
+  const [ratingsChanged, setRatingsChanged] = useState(false)
+
+  const setProfile = (newUser: UserProfile) => {
+    _setProfile(newUser)
+    setRatingsChanged(true)
+  }
+
+
+  console.log(ratingsChanged)
 
   return (
     <Box
@@ -38,8 +55,8 @@ function App() {
         <Box sx={{ width: '25%', padding: '1rem' }}>
           <Paper sx={{ padding: '1rem' }}>
             <RatingsTab
-              profile={ratedMovies}
-              setProfile={setRatedMovies}
+              profile={profile}
+              setProfile={setProfile}
             />
           </Paper>
         </Box>
@@ -54,6 +71,10 @@ function App() {
               <ShowRecommended
                 recommendedCollab={recommendationsCollab}
                 recommendedContent={recommendationsContent}
+                makeUnseenCollab={() => setRecommendationsCollab(recommendationsCollab.map(({movie})=> ({movie, seen: false})))}
+                makeUnseenContent={() => setRecommendationsContent(recommendationsContent.map(({movie})=> ({movie, seen: false})))}
+                profile={profile}
+                setProfile={setProfile}
               />
             </Paper>
           </Box>
@@ -62,9 +83,13 @@ function App() {
           <Box sx={{ flex: 1 }}>
             <Paper sx={{ padding: '1rem', height: '100%' }}>
               <GetRecommendations
-                profile={ratedMovies}
+                profile={profile}
                 setRecommendedCollab={setRecommendationsCollab}
                 setRecommendedContent={setRecommendationsContent}
+                recommendedCollab={recommendationsCollab}
+                recommendedContent={recommendationsContent}
+                ratingsChanged={ratingsChanged}
+                setRatingsChanged={setRatingsChanged}
               />
             </Paper>
           </Box>

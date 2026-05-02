@@ -9,7 +9,7 @@ class CollaborativeRecommender {
 
     const payload = {
       ratings: userProfile.toDict(),
-      k: 2,
+      k: 30,
     }
 
     console.log("[collab.service] payload:", payload)

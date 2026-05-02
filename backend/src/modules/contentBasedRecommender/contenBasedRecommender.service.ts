@@ -9,7 +9,7 @@ class ContentBasedRecommender {
 
     const payload = {
       ratings: userProfile.toDict(),
-      k: 2,
+      k: 30,
     }
 
     console.log("[content.service] payload:", payload)
