@@ -36,3 +36,7 @@ def recommend_collaborative():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+@bp.route("/", methods=["GET"])
+def health_check():
+    return "ML-API běží 🚀", 200
