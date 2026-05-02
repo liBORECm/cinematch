@@ -1,224 +1,79 @@
-import { useState, useEffect } from 'react'
-import { Service } from './Service' // Uprav cestu podle tvé struktury
+import { useState } from 'react'
 import { Movie } from './models/movie'
 import { UserProfile } from './models/userProfile'
 import './App.css'
-
-// Pomocný typ pro držení filmu a jeho hodnocení pospolu
-interface RatedMovie {
-  movie: Movie
-  rating: number
-}
+import { Box, Paper } from '@mui/material'
+import RatingsTab from './RatingsTab'
+import ShowRecommended from './ShowRecommended'
+import GetRecommendations from './GetRecommendation'
 
 function App() {
-  // --- STATE ---
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<Movie[]>([])
-  const [isSearching, setIsSearching] = useState(false)
+  const [ratedMovies, setRatedMovies] = useState<UserProfile>(
+    new UserProfile([]),
+  )
+  const [recommendationsContent, setRecommendationsContent] =
+    useState<Movie[]>([])
+  const [recommendationsCollab, setRecommendationsCollab] = useState<
+    Movie[]
+  >([])
 
-  const [ratedMovies, setRatedMovies] = useState<RatedMovie[]>([])
-  
-  const [recommendationsContent, setRecommendationsContent] = useState<Movie[]>([])
-  const [recommendationsCollab, setRecommendationsCollab] = useState<Movie[]>([])
-  const [isRecommending, setIsRecommending] = useState(false)
-
-  // --- ACTIONS ---
-
-  // 1. Vyhledávání filmů s primitivním debouncem (aby to nevolalo API při každém úhozu)
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (searchQuery.trim().length === 0) {
-        setSearchResults([])
-        return
-      }
-      setIsSearching(true)
-      try {
-        const results = await Service.getMovies(10, 0, searchQuery)
-        setSearchResults(results)
-      } catch (error) {
-        console.error("Chyba při hledání filmů:", error)
-      } finally {
-        setIsSearching(false)
-      }
-    }, 500) // Půl vteřiny po dopsání to pošle request
-
-    return () => clearTimeout(delayDebounceFn)
-  }, [searchQuery])
-
-  // 2. Přidání/Změna/Odebrání hodnocení
-  const handleRateMovie = (movie: Movie, rating: number) => {
-    setRatedMovies((prev) => {
-      const existingIndex = prev.findIndex((rm) => rm.movie.id === movie.id)
-      
-      // Pokud je hodnocení 0 (nebo uživatel klikne na "odstranit"), vyhodíme ho ze seznamu
-      if (rating === 0) {
-        return prev.filter((rm) => rm.movie.id !== movie.id)
-      }
-
-      // Pokud už ve state je, updatneme rating
-      if (existingIndex >= 0) {
-        const newState = [...prev]
-        newState[existingIndex] = { ...newState[existingIndex], rating }
-        return newState
-      }
-
-      // Jinak přidáme nový
-      return [...prev, { movie, rating }]
-    })
-  }
-
-  // 3. Získání doporučení
-  const handleGetRecommendations = async () => {
-    if (ratedMovies.length === 0) return
-
-    setIsRecommending(true)
-    try {
-      // Tady předpokládám, že Movie.id je to samé co UserProfile očekává pod imdbId
-      const ratingsPayload = ratedMovies.map((rm) => ({
-        imdbId: rm.movie.id,
-        rating: rm.rating,
-      }))
-      const profile = new UserProfile(ratingsPayload)
-      
-      const resultsContent = await Service.recommendContentBased(profile)
-      setRecommendationsContent(resultsContent)
-
-      const resultsCollab = await Service.recommendCollab(profile)
-      setRecommendationsCollab(resultsCollab)
-    } catch (error) {
-      console.error("Chyba při získávání doporučení:", error)
-    } finally {
-      setIsRecommending(false)
-    }
-  }
-
-  // --- RENDER ---
   return (
-    <div className="app-container" style={{ display: 'flex', gap: '2rem', padding: '2rem', fontFamily: 'sans-serif' }}>
-      
-      {/* LEVÝ SLOUPEC: Hledání filmů */}
-      <div className="section-search" style={{ flex: 1 }}>
-        <h2>Vyhledat film</h2>
-        <input
-          type="text"
-          placeholder="Např. Spider-Man..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-        />
-        
-        {isSearching && <p>Hledám...</p>}
-        
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {searchResults.map((movie) => {
-            // Zjistíme, jestli už ho máme ohodnocený, abychom ukázali aktuální stav
-            const currentRating = ratedMovies.find(rm => rm.movie.id === movie.id)?.rating || 0
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+      }}
+    >
+      {/* Hlavní vrstva stránky */}
 
-            return (
-              <li key={movie.id} style={{ borderBottom: '1px solid #ccc', padding: '0.5rem 0' }}>
-                <strong>{movie.title}</strong>
-                <div style={{ marginTop: '0.5rem' }}>
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => handleRateMovie(movie, star)}
-                      style={{
-                        backgroundColor: currentRating >= star ? 'gold' : '#eee',
-                        border: '1px solid #ccc',
-                        cursor: 'pointer',
-                        marginRight: '4px'
-                      }}
-                    >
-                      {star} ★
-                    </button>
-                  ))}
-                </div>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
+      {/* Horní bar (15% výšky) */}
+      <Box sx={{ height: '5%', backgroundColor: '#ccc' }}>
+        {/* Sem můžeš přidat obsah pro horní bar */}
+      </Box>
 
-      {/* PROSTŘEDNÍ SLOUPEC: Můj seznam (UserProfile) */}
-      <div className="section-profile" style={{ flex: 1, borderLeft: '1px solid #eee', paddingLeft: '2rem' }}>
-        <h2>Můj hodnocený seznam</h2>
-        {ratedMovies.length === 0 ? (
-          <p>Zatím jsi neohodnotil žádný film. Najdi nějaký vlevo!</p>
-        ) : (
-          <>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {ratedMovies.map((rm) => (
-                <li key={rm.movie.id} style={{ padding: '0.5rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>{rm.movie.title} (<strong>{rm.rating} ★</strong>)</span>
-                  <button onClick={() => handleRateMovie(rm.movie, 0)} style={{ color: 'red' }}>
-                    Odebrat
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <button 
-              onClick={handleGetRecommendations}
-              disabled={isRecommending}
-              style={{ marginTop: '1rem', padding: '0.75rem 1.5rem', cursor: 'pointer', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px' }}
-            >
-              {isRecommending ? 'Počítám doporučení...' : 'Doporučit další filmy'}
-            </button>
-          </>
-        )}
-      </div>
+      {/* Spodní část stránky rozdělená do sloupců */}
+      <Box sx={{ flex: 1, display: 'flex' }}>
+        {/* Levý sloupec (25% šířky) */}
+        <Box sx={{ width: '25%', padding: '1rem' }}>
+          <Paper sx={{ padding: '1rem' }}>
+            <RatingsTab
+              profile={ratedMovies}
+              setProfile={setRatedMovies}
+            />
+          </Paper>
+        </Box>
 
-      {/* PRAVÝ SLOUPEC: Doporučení */}
-      <div
-        className="section-recommendations"
-        style={{
-          flex: 1,
-          borderLeft: '1px solid #eee',
-          paddingLeft: '2rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem'
-        }}
-      >
-        <h2>Doporučeno pro tebe content</h2>
+        {/* Střední část stránky */}
+        <Box
+          sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+        >
+          {/* Horní část uprostřed (70% šířky) */}
+          <Box sx={{ flex: 1, marginBottom: '1rem' }}>
+            <Paper sx={{ padding: '1rem', height: '100%' }}>
+              <ShowRecommended
+                recommendedCollab={recommendationsCollab}
+                recommendedContent={recommendationsContent}
+              />
+            </Paper>
+          </Box>
 
-        {recommendationsContent.length === 0 && !isRecommending ? (
-          <p>Klikni na tlačítko pro získání doporučení na základě tvého vkusu.</p>
-        ) : (
-          <>
-            {/* PRVNÍ POLOVINA */}
-            <div style={{ flex: 1 }}>
-              <h4>Seznam 1</h4>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {recommendationsContent.map((movie) => (
-                  <li key={`top-${movie.id}`} style={{ padding: '0.5rem 0', borderBottom: '1px dotted #ccc' }}>
-                    ⭐ {movie.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
-        )}
+          {/* Spodní část uprostřed */}
+          <Box sx={{ flex: 1 }}>
+            <Paper sx={{ padding: '1rem', height: '100%' }}>
+              <GetRecommendations
+                profile={ratedMovies}
+                setRecommendedCollab={setRecommendationsCollab}
+                setRecommendedContent={setRecommendationsContent}
+              />
+            </Paper>
+          </Box>
+        </Box>
 
-        {recommendationsCollab.length === 0 && !isRecommending ? (
-          <p>hahhaaaaaa collab</p>
-        ) : (
-          <>
-            {/* DRUHÁ POLOVINA */}
-            <div style={{ flex: 1 }}>
-              <h4>Seznam 2</h4>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {recommendationsCollab.map((movie) => (
-                  <li key={`bottom-${movie.id}`} style={{ padding: '0.5rem 0', borderBottom: '1px dotted #ccc' }}>
-                    ⭐ {movie.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
-        )}
-      </div>
-
-    </div>
+        {/* Pravý sloupec (25% šířky) */}
+        <Box sx={{ width: '25%' }} />
+      </Box>
+    </Box>
   )
 }
 

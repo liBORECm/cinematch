@@ -1,13 +1,15 @@
-export class UserProfile {
-  movieRatings: Array<{imdbId: number, rating: number}>
+import type { Rating } from "./rating"
 
-  public constructor(movieRatings: Array<{imdbId: number, rating: number}>) {
+export class UserProfile {
+  movieRatings: Array<Rating>
+
+  public constructor(movieRatings: Array<Rating>) {
     this.movieRatings = movieRatings
   }
 
   public toDict() {
     return Object.fromEntries(
-      this.movieRatings.map(r => [r.imdbId, r.rating])
+      this.movieRatings.map(r => [r.movie.id, r.rating])
     )
   }
 }
