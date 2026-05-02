@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 })
 
 app.use("/api/v1/content-based", contentBasedRecommenderRoutes)
-app.use("/api/v1/collaborative", collaborativeRecommenderRoutes)
+app.use("/api/v1/collab", collaborativeRecommenderRoutes)
 app.use("/api/v1/movie-db", movieDBRoutes)
 
 app.listen(config.port, () => {
