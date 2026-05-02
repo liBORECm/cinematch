@@ -1,5 +1,5 @@
 import { Box, IconButton } from '@mui/material'
-import { Delete, Edit } from '@mui/icons-material'
+import { Delete, Edit, Info } from '@mui/icons-material'
 import type { Rating } from './models/rating'
 import ShowMovie from './ShowMovie'
 import MovieSearch from './MovieSearch'
@@ -7,14 +7,18 @@ import { UserProfile } from './models/userProfile'
 import RateDialog from './RateDialog'
 import { useState } from 'react'
 import type { Movie } from './models/movie'
+import ShowMovieBigBig from './ShowMovieBigBig'
 
 export default function RatingsTab(props: {
   profile: UserProfile
   setProfile: (profile: UserProfile) => void
 }) {
-  const [selectedMovie, setSelectedMovie] = useState<{movie: Movie, index: number} | null>(
-    null,
-  )
+  const [selectedMovieEdit, setSelectedMovieEdit] = useState<{
+    movie: Movie
+    index: number
+  } | null>(null)
+  const [selectedMovieShow, setSelectedMovieShow] =
+    useState<Movie | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
   // Funkce pro odstranění filmu z profilu
@@ -30,9 +34,6 @@ export default function RatingsTab(props: {
       <Box>
         <MovieSearch
           onSelect={(selected: Rating) => {
-            console.log("AHAAAA PICOOo")
-            console.log(selected)
-            console.log(props.setProfile)
             props.setProfile(
               new UserProfile([
                 ...props.profile.movieRatings,
@@ -43,7 +44,13 @@ export default function RatingsTab(props: {
           profile={props.profile}
         />
       </Box>
-      <Box>
+      <Box
+        sx={{
+          maxHeight: '70vh', // Maximální výška 80% výšky okna
+          overflowY: 'auto', // Povolení vertikálního scrollování
+          paddingRight: '16px', // Přidání mezery pro scrollbar
+        }}
+      >
         {props.profile.movieRatings.map((rating, ind) => (
           <Box
             key={rating.movie.id}
@@ -55,10 +62,14 @@ export default function RatingsTab(props: {
             }}
           >
             {/* Zobrazení filmu */}
-            <ShowMovie movie={rating.movie} rating={rating.rating} width="320px"/>
+            <ShowMovie
+              movie={rating.movie}
+              rating={rating.rating}
+              width="320px"
+            />
 
             {/* Ikony pro editaci a odstranění */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: "column"}}>
               {/* Ikona pro odstranění */}
               <IconButton
                 onClick={() => handleRemoveMovie(rating.movie.id)}
@@ -68,29 +79,57 @@ export default function RatingsTab(props: {
                 <Delete />
               </IconButton>
 
-              <IconButton onClick={() => {
-                setSelectedMovie({movie: rating.movie, index: ind})
-                setDialogOpen(true)
-              }} color="primary">
+              <IconButton
+                onClick={() => {
+                  setSelectedMovieEdit({
+                    movie: rating.movie,
+                    index: ind,
+                  })
+                  setDialogOpen(true)
+                }}
+                color="primary"
+              >
                 <Edit />
+              </IconButton>
+
+              <IconButton
+                onClick={() => {
+                  setSelectedMovieShow(rating.movie)
+                }}
+                color="success"
+              >
+                <Info />
               </IconButton>
             </Box>
           </Box>
         ))}
       </Box>
-      {selectedMovie !== null && (
+      {selectedMovieEdit !== null && (
         <RateDialog
           openDialog={dialogOpen}
           handleDialogClose={() => setDialogOpen(false)}
-          selectedMovie={selectedMovie.movie}
+          selectedMovie={selectedMovieEdit.movie}
           setRating={(newRating) => {
-            setSelectedMovie(null)
-            props.setProfile(new UserProfile([
-              ...props.profile.movieRatings.filter((_, i) => i < selectedMovie.index),
-              newRating,
-              ...props.profile.movieRatings.filter((_, i) => i > selectedMovie.index),
-            ]))
+            setSelectedMovieEdit(null)
+            props.setProfile(
+              new UserProfile([
+                ...props.profile.movieRatings.filter(
+                  (_, i) => i < selectedMovieEdit.index,
+                ),
+                newRating,
+                ...props.profile.movieRatings.filter(
+                  (_, i) => i > selectedMovieEdit.index,
+                ),
+              ]),
+            )
           }}
+        />
+      )}
+
+      {selectedMovieShow !== null && (
+        <ShowMovieBigBig
+          movie={selectedMovieShow}
+          handleClose={() => setSelectedMovieShow(null)}
         />
       )}
     </Box>

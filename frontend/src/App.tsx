@@ -63,7 +63,7 @@ function App() {
 
         {/* Střední část stránky */}
         <Box
-          sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+          sx={{ flex: 1, display: 'flex', flexDirection: 'column', maxHeight: '90vh'}}
         >
           {/* Horní část uprostřed (70% šířky) */}
           <Box sx={{ flex: 1, marginBottom: '1rem' }}>

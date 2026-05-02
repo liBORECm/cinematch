@@ -31,7 +31,7 @@ export default function ShowRecommended(props: {
   }, [props])
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'row', maxHeight: "80vh"}}>
       <Box>
         {props.recommendedCollab
           .filter((item) => !item.seen)
