@@ -7,7 +7,7 @@ import {
   Paper,
   MenuItem,
   CircularProgress,
-  MenuList
+  MenuList,
 } from '@mui/material'
 import type { UserProfile } from './models/userProfile'
 import ShowMovie from './ShowMovie'
@@ -35,7 +35,14 @@ export default function MovieSearch(props: {
       setIsSearching(true)
       try {
         const results = await Service.getMovies(10, 0, searchQuery)
-        setSearchResults(results)
+        setSearchResults(
+          results.filter(
+            (movie) =>
+              props.profile.movieRatings.find(
+                (rating) => rating.movie.id === movie.id,
+              ) == undefined,
+          ),
+        )
       } catch (error) {
         console.error('Chyba při hledání filmů:', error)
       } finally {
@@ -137,16 +144,18 @@ export default function MovieSearch(props: {
         </Paper>
       )}
 
-      {selectedMovie !== null && <RateDialog
-        openDialog={openDialog}
-        handleDialogClose={handleDialogClose}
-        selectedMovie={selectedMovie}
-        setRating={(newRating) => {
-          props.onSelect(newRating)
-          setSearchQuery("")
-          setSearchResults([])
-        }}
-      />}
+      {selectedMovie !== null && (
+        <RateDialog
+          openDialog={openDialog}
+          handleDialogClose={handleDialogClose}
+          selectedMovie={selectedMovie}
+          setRating={(newRating) => {
+            props.onSelect(newRating)
+            setSearchQuery('')
+            setSearchResults([])
+          }}
+        />
+      )}
     </div>
   )
 }
