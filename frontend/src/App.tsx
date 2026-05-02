@@ -14,6 +14,9 @@ import HistoryIcon from '@mui/icons-material/History'
 import { LogService } from './LogService'
 
 function App() {
+  useEffect(() => {
+    document.title = "Cinematch 🔥";
+  }, []);
   const [profile, _setProfile] = useState<UserProfile>(
     new UserProfile([]),
   )
