@@ -14,7 +14,7 @@ sudo cp -r dist/* /var/www/html/
 cd ..
 
 echo "🐳 Starting backend + ml-api..."
-docker compose build --no-cache
-docker compose up -d
+docker compose build --no-cache backend ml-api
+docker compose up -d backend ml-api
 
 echo "✅ DONE"
